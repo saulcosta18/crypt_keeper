@@ -25,7 +25,8 @@ module CryptKeeper
       #
       # Returns an encrypted string
       def encrypt(value)
-        escape_and_execute_sql(["SELECT pgp_sym_encrypt(?, ?, ?)", value.to_s, key, pgcrypto_options])['pgp_sym_encrypt']
+        escape_and_execute_sql(
+          ["SELECT pgp_sym_encrypt(?, ?, ?)", value.to_s, key, pgcrypto_options])['pgp_sym_encrypt']
       end
 
       # Public: Decrypts a string
@@ -36,7 +37,8 @@ module CryptKeeper
       end
 
       def search(records, field, criteria)
-        records.where("(pgp_sym_decrypt(cast(#{field} AS bytea), ?) = ?)", key, criteria)
+        records.where(
+          "(pgp_sym_decrypt(cast(#{field} AS bytea), ?) ILIKE '#{criteria}')", key)
       end
     end
   end
